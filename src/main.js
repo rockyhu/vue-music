@@ -13,7 +13,7 @@ import 'common/stylus/index.styl'
 
 /* eslint-disable no-new */
 new Vue({
-  el: '#app',
-  router,
-  render: h => h(App)
+	el: '#app',
+	router,
+	render: h => h(App)
 })

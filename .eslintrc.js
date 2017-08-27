@@ -29,6 +29,9 @@ module.exports = {
     'eol-last': 0,
     'no-tabs': "off",
     'space-before-function-paren': 0,
-    'no-multiple-empty-lines': 0
+    'no-multiple-empty-lines': 0,
+    'no-unused-vars': 0,
+    'padded-blocks': 0,
+    'no-trailing-spaces': 0
   }
 }
