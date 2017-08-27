@@ -1,23 +1,19 @@
 <template>
-  <div id="app">
-    <img src="./assets/logo.png">
-    <router-view></router-view>
-  </div>
+	<div id="app">
+		<m-header></m-header>
+	</div>
 </template>
 
-<script>
-export default {
-  name: 'app'
-}
+<script type="text/ecmascript-6">
+	import MHeader from 'components/m-header/m-header.vue'
+
+	export default {
+		components: {
+			MHeader
+		}
+	}
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>
