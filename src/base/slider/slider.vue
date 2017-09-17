@@ -17,6 +17,7 @@
 	export default {
 		data() {
 			return {
+				// 轮播图数量
 				dots: [],
 				// 当前的slider索引
 				currentPageIndex: 0
@@ -69,9 +70,10 @@
 
 				let width = 0
 				let sliderWidth = this.$refs.slider.clientWidth
+
 				for (let i = 0; i < this.children.length; i++) {
 					let child = this.children[i]
-					// 为每一个slider添加slider-item演示
+					// 为每一个slider添加slider-item样式
 					addClass(child, 'slider-item')
 
 					// 设置每一个slider的宽度
@@ -94,22 +96,25 @@
 			_initSlider() {
 				this.slider = new BScroll(this.$refs.slider, {
 					scrollX: true,
-					scrollY: false,
 					// 惯性
 					momentum: false,
-					snap: true,
-					snapLoop: this.loop,
-					snapThreshold: 0.3,
-					snapSpeed: 400
+					snap: {
+						loop: this.loop,
+						threshold: 0.3,
+						speed: 400
+					}
 				})
 
 				this.slider.on('scrollEnd', () => {
 					let pageIndex = this.slider.getCurrentPage().pageX
+					if (pageIndex > this.dots.length) {
+						pageIndex = pageIndex % this.dots.length
+					}
+					this.slider.goToPage(pageIndex, 0, 400)
 					if (this.loop) {
 						pageIndex -= 1
 					}
 					this.currentPageIndex = pageIndex
-
 					if (this.autoPlay) {
 						clearTimeout(this.timer)
 						this._play()
@@ -153,9 +158,9 @@
 					width: 100%
 					overflow: hidden
 					text-decoration: none
-				img
-					display: block
-					width: 100%
+					img
+						display: block
+						width: 100%
 		.dots
 			position: absolute
 			right: 0

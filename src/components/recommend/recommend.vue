@@ -22,25 +22,37 @@
 
 <script type="text/ecmascript-6">
 	import Slider from 'base/slider/slider'
-	import { getRecommend } from 'api/recommend'
+	import { getRecommend, getDiscList } from 'api/recommend'
 	import { ERR_OK } from 'api/config'
 
 	export default {
 		data() {
 			return {
-				recommends: []
+				recommends: [],
+				discList: []
 			}
 		},
 		// 钩子函数
 		created() {
 			this._getRecommend()
+			this._getDiscList()
 		},
 		// 方法对象
 		methods: {
+			// 获取推荐页面轮播图数据
 			_getRecommend() {
+				// getRecommend返回Promise对象
 				getRecommend().then((res) => {
 					if (res.code === ERR_OK) {
 						this.recommends = res.data.slider
+					}
+				})
+			},
+			// 获取歌单数据
+			_getDiscList() {
+				getDiscList().then((res) => {
+					if (res.code === ERR_OK) {
+						this.discList = res.data.categories
 					}
 				})
 			}

@@ -1,6 +1,7 @@
 import jsonp from 'common/js/jsonp'
 import { commonParams, options } from './config'
 
+// 获取推荐页面轮播图数据
 export function getRecommend () {
 	const url = 'https://c.y.qq.com/musichall/fcgi-bin/fcg_yqqhomepagerecommend.fcg'
 	
@@ -13,6 +14,7 @@ export function getRecommend () {
 	return jsonp(url, data, options)
 }
 
+// 获取歌单数据
 export function getDiscList() {
 	const url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
 	
