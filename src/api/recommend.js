@@ -1,5 +1,6 @@
 import jsonp from 'common/js/jsonp'
 import { commonParams, options } from './config'
+import axios from 'axios'
 
 // 获取推荐页面轮播图数据
 export function getRecommend () {
@@ -16,7 +17,7 @@ export function getRecommend () {
 
 // 获取歌单数据
 export function getDiscList() {
-	const url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
+	const url = '/api/getDiscList'
 	
 	const data = Object.assign({}, commonParams, {
 		platform: 'yqq',
@@ -27,8 +28,13 @@ export function getDiscList() {
 		sortId: 5,
 		categoryId: 10000000,
 		rnd: Math.random(),
-		needNewCode: 1
+		needNewCode: 0,
+		format: 'json'
 	})
 	
-	return jsonp(url, data, options)
+	return axios.get(url, {
+		params: data
+	}).then((res) => {
+		return Promise.resolve(res.data)
+	})
 }
