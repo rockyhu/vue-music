@@ -25,6 +25,11 @@
 			data: {
 				type: Array,
 				default: null
+			},
+			// 是否要监听滚动事件
+			listenScroll: {
+				type: Boolean,
+				default: false
 			}
 		},
 		// 钩子函数
@@ -44,6 +49,16 @@
 					probeType: this.probeType,
 					click: this.click
 				})
+
+				if (this.listenScroll) {
+					let me = this
+					// 监听scroll事件
+					this.scroll.on('scroll', (pos) => {
+						// 派发scroll事件给父组件
+						me.$emit('scroll', pos)
+					})
+				}
+
 			},
 			// 启动better-scroll, 默认开启
 			enable() {
@@ -56,6 +71,17 @@
 			// 强制 scroll 重新计算，当 better-scroll 中的元素发生变化的时候调用此方法
 			refresh() {
 				this.scroll && this.scroll.refresh()
+			},
+			// scrollTo(x, y, time, easing)
+			// 滚动到某个位置，x,y 代表坐标，time 表示动画时间，easing 表示缓动函数
+			scrollTo() {
+				// 通过apply方法把接收到的参数arguments传递给better-scroll的scrollTo方法
+				this.scroll && this.scroll.scrollTo.apply(this.scroll, arguments)
+			},
+			// scrollToElement(el, time, offsetX, offsetY, easing)
+			// 滚动到某个元素，el（必填）表示 dom 元素，time 表示动画时间，offsetX 和 offsetY 表示坐标偏移量，easing 表示缓动函数
+			scrollToElement() {
+				this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments)
 			}
 		},
 		// 观察数据或对象的变化
