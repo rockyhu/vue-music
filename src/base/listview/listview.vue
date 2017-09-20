@@ -100,6 +100,18 @@
 			},
 			// 对scrollTo做简单封装
 			_scrollTo(index) {
+				// 当index为null时，直接跳出（点击快捷栏目顶部或尾部的时候）
+				if (!index && index !== 0) {
+					return
+				}
+				// touchmove的时候，index会出现负数或者大于字母快捷栏目的个数
+				if (index < 0) {
+					index = 0
+				} else if (index > this.listHeight.length - 2) {
+					index = this.listHeight.length - 2
+				}
+				// 点击右侧字母快捷栏目跳转到指定的区间，并且计算scrollY，因为要高亮字母快捷导航
+				this.scrollY = -this.listHeight[index]
 				this.$refs.listview.scrollToElement(this.$refs.listGroup[index], 0)
 			},
 			// 计算每个group的高度区间数组
