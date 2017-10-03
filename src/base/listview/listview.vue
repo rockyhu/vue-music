@@ -5,7 +5,7 @@
 			<li v-for="group in data" class="list-group" ref="listGroup">
 				<h2 class="list-group-title">{{group.title}}</h2>
 				<ul>
-					<li v-for="item in group.items" class="list-group-item">
+					<li v-for="item in group.items" class="list-group-item" @click="selectItem(item)">
 						<img v-lazy="item.avatar" class="avatar" alt="">
 						<span class="name">{{item.name}}</span>
 					</li>
@@ -19,15 +19,24 @@
 				</li>
 			</ul>
 		</div>
+		<div class="list-fixed" v-show="fixedTitle" ref="fixed">
+			<h1 class="fixed-title">{{fixedTitle}}</h1>
+		</div>
+		<div v-show="!data.length" class="loading-container">
+			<loading></loading>
+		</div>
 	</scroll>
 </template>
 
 <script type="text/ecmascript-6">
 	import Scroll from 'base/scroll/scroll'
+	import Loading from 'base/loading/loading'
 	import { getData } from 'common/js/dom'
 
 	// 定义右侧每个元素的高度
 	const ANCHOR_HEIGHT = 18
+	// 定义fixed-title的高度
+	const TITLE_HEIGHT = 30
 
 	export default {
 		// 钩子
@@ -47,7 +56,9 @@
 				// 纵坐标实时滚动位置坐标
 				scrollY: -1,
 				// 当前索引
-				currentIndex: 0
+				currentIndex: 0,
+				// 表示区块的上限和滚动这个位置的滚动差
+				diff: -1
 			}
 		},
 		// 接收父组件传送的参数
@@ -66,11 +77,23 @@
 				return this.data.map((group) => {
 					return group.title.substr(0, 1)
 				})
+			},
+			// 分组顶部fixed标题
+			fixedTitle() {
+				if (this.scrollY > 0) {
+					return ''
+				}
+				return this.data[this.currentIndex] ? this.data[this.currentIndex].title : ''
 			}
 		},
 		// 方法对象
 		// 私有方法放在下面，关于公众方法或者绑定事件的方法放在上面
 		methods: {
+			// 歌手点击事件
+			selectItem(item) {
+				// 派发select事件给父组件
+				this.$emit('select', item)
+			},
 			// 开始滚动事件
 			onShortCutTouchStart(e) {
 				// 获取点击的索引
@@ -156,17 +179,33 @@
 					let height2 = listHeight[i + 1]
 					if (-newY >= height1 && -newY < height2) {
 						this.currentIndex = i
+						// 只有在中间部分滚动时才存在diff
+						this.diff = height2 + newY
 						return
 					}
 				}
 
 				// 当滚动到底部，且-newY大于最后一个元素的上限
 				this.currentIndex = listHeight.length - 2
+			},
+			// 观测diff的变化
+			diff(newVal) {
+				let fixedTop = (newVal > 0 && newVal < TITLE_HEIGHT) ? newVal - TITLE_HEIGHT : 0
+
+				// 为了减少fixed的DOM操作次数，提供性能
+				if (this.fixedTop === fixedTop) {
+					return
+				}
+				this.fixedTop = fixedTop
+
+				// 设置fixed的DOM偏移
+				this.$refs.fixed.style.transform = `translate3d(0,${fixedTop}px,0)`
 			}
 		},
 		// 注册子组件
 		components: {
-			Scroll
+			Scroll,
+			Loading
 		}
 	}
 </script>

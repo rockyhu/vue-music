@@ -1,7 +1,9 @@
 <template>
 	<div class="singer">
 		<!-- list-view插件 -->
-		<list-view :data="singers"></list-view>
+		<list-view @select="selectSinger" :data="singers"></list-view>
+		<!-- 挂载子路由 -->
+		<router-view></router-view>
 	</div>
 </template>
 
@@ -10,6 +12,8 @@
 	import { ERR_OK } from 'api/config'
 	import Singer from 'common/js/singer'
 	import ListView from 'base/listview/listview'
+	// 引入vuex提供的mapMutations语法糖
+	import {mapMutations} from 'vuex'
 
 	const HOT_NAME = '热门'
 	const HOT_SINGER_LEN = 10
@@ -27,6 +31,15 @@
 		},
 		// 方法对象
 		methods: {
+			// 歌手点击跳转方法
+			selectSinger(singer) {
+				console.log(singer)
+				// 跳转路由，路由编程式写法
+				this.$router.push({
+					path: `/singer/${singer.id}`
+				})
+				this.setSinger(singer)
+			},
 			// 获取歌手数据
 			_getSingerList() {
 				getSingerList().then((res) => {
@@ -81,7 +94,11 @@
 				})
 				// 返回一维数组
 				return hot.concat(ret)
-			}
+			},
+			// ES6扩展运算符
+			...mapMutations({
+				setSinger: 'SET_SINGER'
+			})
 		},
 		// 注册组件
 		components: {
