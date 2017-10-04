@@ -24,3 +24,37 @@ export function getData (el, name, val) {
 		return el.getAttribute(name)
 	}
 }
+
+// 浏览器的能力检测特性，CSSStyleDeclaration
+let elementStyle = document.createElement('div').style
+
+let vendor = (() => {
+	// 目前存在的浏览器前缀产商
+	let transformNames = {
+		webkit: 'webkitTransform',
+		Moz: 'MozTransform',
+		O: 'OTransform',
+		ms: 'msTransform',
+		standard: 'transform'
+	}
+	
+	// 判断当前浏览器支持哪一种前缀
+	for (let key in transformNames) {
+		if (elementStyle[transformNames[key]] !== undefined) {
+			return key
+		}
+	}
+})()
+
+// JS设置CSS属性时，根据不同浏览器设置兼容前缀
+export function prefixStyle (style) {
+	if (vendor === false) {
+		return false
+	}
+	
+	if (vendor === 'standard') {
+		return style
+	}
+	
+	return vendor + style.charAt(0).toUpperCase() + style.substr(1)
+}

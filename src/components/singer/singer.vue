@@ -33,7 +33,6 @@
 		methods: {
 			// 歌手点击跳转方法
 			selectSinger(singer) {
-				console.log(singer)
 				// 跳转路由，路由编程式写法
 				this.$router.push({
 					path: `/singer/${singer.id}`
@@ -95,7 +94,7 @@
 				// 返回一维数组
 				return hot.concat(ret)
 			},
-			// ES6扩展运算符
+			// ES6扩展运算符,vuex提供的设置数据的语法糖mapMutations
 			...mapMutations({
 				setSinger: 'SET_SINGER'
 			})
