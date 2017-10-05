@@ -1,9 +1,24 @@
-/**
- * Created by rockyhu on 2017/9/20.
- */
+import {playMode} from 'common/js/config'
+
 // 状态的管理
 const state = {
-	singer: {}
+	// 歌手数据
+	singer: {},
+	
+	// 播放器数据状态管理
+	
+	// 是否播放
+	playing: false,
+	// 是否全屏
+	fullScreen: false,
+	// 播放列表
+	playlist: [],
+	// 顺序列表
+	sequenceList: [],
+	// 播放模式 - 顺序播放
+	mode: playMode.sequence,
+	// 当前播放的索引
+	currentIndex: -1
 }
 
 export default state
