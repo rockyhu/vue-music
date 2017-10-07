@@ -65,8 +65,13 @@
 			},
 			// 点击设置播放进度
 			progressClick (e) {
-				console.log(e)
-				this._offset(e.offsetX)
+				// getBoundingClientRect这个方法返回一个矩形对象，包含四个属性：left、top、right和bottom。分别表示元素各边与页面上边和左边的距离。
+				const rect = this.$refs.progressBar.getBoundingClientRect()
+				// e.pageX表示相对整个页面的坐标
+				const offsetWidth = e.pageX - rect.left
+				this._offset(offsetWidth)
+				// 这里当我们点击 progressBtn 的时候，e.offsetX获取不对
+				// this._offset(e.offsetX)
 				this._triggerPercent()
 			},
 			// 拖动结束时，设置播放的进度

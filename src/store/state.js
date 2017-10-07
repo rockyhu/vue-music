@@ -1,4 +1,4 @@
-import {playMode} from 'common/js/config'
+import { playMode } from 'common/js/config'
 
 // 状态的管理
 const state = {

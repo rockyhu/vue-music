@@ -1,3 +1,7 @@
+import { getLyric } from 'api/song'
+import { ERR_OK } from 'api/config'
+import { Base64 } from 'js-base64'
+
 // 构造一个Song类
 export default class Song {
 	constructor ({id, mid, singer, name, album, duration, image, url}) {
@@ -9,6 +13,25 @@ export default class Song {
 		this.duration = duration
 		this.image = image
 		this.url = url
+	}
+	
+	// 为Song类添加获取歌曲的方法
+	getLyric () {
+		// 如果歌词已经存在那么直接返回即可
+		if (this.lyric) {
+			return Promise.resolve(this.lyric)
+		}
+		
+		return new Promise((resolve, reject) => {
+			getLyric(this.mid).then((res) => {
+				if (res.retcode === ERR_OK) {
+					this.lyric = Base64.decode(res.lyric)
+					resolve(this.lyric)
+				} else {
+					reject('no lyric')
+				}
+			})
+		})
 	}
 }
 
@@ -29,11 +52,11 @@ export function createSong (musicData) {
 // 定义一个方法将歌手列表转换成字符串
 /**
  singer: [
-	 {
-		 id: 5062,
-		 mid: "002J4UUk29y8BY",
-		 name: "薛之谦"
-	 }
+ {
+	 id: 5062,
+	 mid: "002J4UUk29y8BY",
+	 name: "薛之谦"
+ }
  ],
  * @param singer
  * @returns {*}
