@@ -1,7 +1,7 @@
 <template>
-	<div class="singer">
+	<div class="singer" ref="singer">
 		<!-- list-view插件 -->
-		<list-view @select="selectSinger" :data="singers"></list-view>
+		<list-view @select="selectSinger" :data="singers" ref="list"></list-view>
 		<!-- 挂载子路由 -->
 		<router-view></router-view>
 	</div>
@@ -13,26 +13,35 @@
 	import Singer from 'common/js/singer'
 	import ListView from 'base/listview/listview'
 	// 引入vuex提供的mapMutations语法糖
-	import {mapMutations} from 'vuex'
+	import { mapMutations } from 'vuex'
+	import { playlistMixin } from 'common/js/mixin'
 
 	const HOT_NAME = '热门'
 	const HOT_SINGER_LEN = 10
 
 	export default {
+		// 插入mixin
+		mixins: [playlistMixin],
 		// 定义数据
-		data() {
+		data () {
 			return {
 				singers: []
 			}
 		},
 		// 钩子
-		created() {
+		created () {
 			this._getSingerList()
 		},
 		// 方法对象
 		methods: {
+			handlePlaylist (playlist) {
+				const bottom = playlist.length > 0 ? '60px' : ''
+				this.$refs.singer.style.bottom = bottom
+				// 调用listview组件的refresh方法重新计算
+				this.$refs.list.refresh()
+			},
 			// 歌手点击跳转方法
-			selectSinger(singer) {
+			selectSinger (singer) {
 				// 跳转路由，路由编程式写法
 				this.$router.push({
 					path: `/singer/${singer.id}`
@@ -40,7 +49,7 @@
 				this.setSinger(singer)
 			},
 			// 获取歌手数据
-			_getSingerList() {
+			_getSingerList () {
 				getSingerList().then((res) => {
 					if (res.code === ERR_OK) {
 						this.singers = this._normalizeSinger(res.data.list)
@@ -48,7 +57,7 @@
 				})
 			},
 			// 规范化singer数据
-			_normalizeSinger(list) {
+			_normalizeSinger (list) {
 				let map = {
 					hot: {
 						title: HOT_NAME,

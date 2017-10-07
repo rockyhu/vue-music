@@ -1,5 +1,5 @@
 <template>
-	<div class="recommend">
+	<div class="recommend" ref="recommend">
 		<scroll ref="scroll" class="recommend-content" :data="discList">
 			<div>
 				<div v-if="recommends.length" class="slider-wrapper">
@@ -15,7 +15,7 @@
 				<div class="recommend-list">
 					<h1 class="list-title">热门歌单推荐</h1>
 					<ul>
-						<li v-for="item in discList" class="item">
+						<li @click="selectItem(item)" v-for="item in discList" class="item">
 							<div class="icon">
 								<!-- 采用vue-lazyload懒加载图片 -->
 								<img width="60" height="60" v-lazy="item.imgurl" alt="">
@@ -34,6 +34,8 @@
 				<loading></loading>
 			</div>
 		</scroll>
+		<!-- 挂载子路由 -->
+		<router-view></router-view>
 	</div>
 </template>
 
@@ -43,23 +45,33 @@
 	import Slider from 'base/slider/slider'
 	import { getRecommend, getDiscList } from 'api/recommend'
 	import { ERR_OK } from 'api/config'
+	import { playlistMixin } from 'common/js/mixin'
+	import { mapMutations } from 'vuex'
 
 	export default {
-		data() {
+		// 插入mixin
+		mixins: [playlistMixin],
+		data () {
 			return {
 				recommends: [],
 				discList: []
 			}
 		},
 		// 钩子函数
-		created() {
+		created () {
 			this._getRecommend()
 			this._getDiscList()
 		},
 		// 方法对象
 		methods: {
+			handlePlaylist (playlist) {
+				const bottom = playlist.length > 0 ? '60px' : ''
+				this.$refs.recommend.style.bottom = bottom
+				// 调用scroll组件的refresh方法重新计算
+				this.$refs.scroll.refresh()
+			},
 			// 获取推荐页面轮播图数据
-			_getRecommend() {
+			_getRecommend () {
 				// getRecommend返回Promise对象
 				getRecommend().then((res) => {
 					if (res.code === ERR_OK) {
@@ -67,8 +79,15 @@
 					}
 				})
 			},
+			// 点击歌单，跳转到歌单列表
+			selectItem (item) {
+				this.$router.push({
+					path: `/recommend/${item.dissid}`
+				})
+				this.setDisc(item)
+			},
 			// 获取歌单数据
-			_getDiscList() {
+			_getDiscList () {
 				getDiscList().then((res) => {
 					if (res.code === ERR_OK) {
 						this.discList = res.data.list
@@ -76,13 +95,16 @@
 				})
 			},
 			// 一旦有图片加载完成的时候，就重新刷新scroll插件
-			loadImage() {
+			loadImage () {
 				// 避免多张图片加载完时，都触发refresh事件
 				if (!this.checkLoaded) {
 					this.$refs.scroll.refresh()
 					this.checkLoaded = true
 				}
-			}
+			},
+			...mapMutations({
+				setDisc: 'SET_DISC'
+			})
 		},
 		// 注册组件
 		components: {
@@ -133,7 +155,7 @@
 						overflow: hidden
 						font-size: $font-size-medium
 						.name
-							margin-bottom:10px
+							margin-bottom: 10px
 							color: $color-text
 						.desc
 							color: $color-text-d

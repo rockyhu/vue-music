@@ -32,6 +32,7 @@
 	import SongList from 'base/song-list/song-list'
 	import { mapActions } from 'vuex'
 	import { prefixStyle } from 'common/js/dom'
+	import { playlistMixin } from 'common/js/mixin'
 
 	// 预留偏移量
 	const RESERVED_HEIGHT = 40
@@ -41,6 +42,8 @@
 	const backdrop = prefixStyle('backdrop-filter')
 
 	export default {
+		// 插入mixin
+		mixins: [playlistMixin],
 		// 接收父组件的参数
 		props: {
 			// 背景图
@@ -85,6 +88,13 @@
 		},
 		// 方法属性
 		methods: {
+			// 实现mixin中的方法
+			handlePlaylist (playlist) {
+				const bottom = playlist.length > 0 ? '60px' : ''
+				this.$refs.list.$el.style.bottom = bottom
+				// scroll重新计算
+				this.$refs.list.refresh()
+			},
 			// 滚动事件
 			scroll (pos) {
 				this.scrollY = pos.y

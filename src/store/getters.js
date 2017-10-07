@@ -4,6 +4,9 @@
 // 对state状态做映射
 export const singer = state => state.singer
 
+// 对歌单列表状态做映射
+export const disc = state => state.disc
+
 // 对播放器state状态做映射
 export const playing = state => state.playing
 export const fullScreen = state => state.fullScreen

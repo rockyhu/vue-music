@@ -116,6 +116,10 @@
 				let anchorIndex = parseInt(this.touch.anchorIndex) + delta
 				this._scrollTo(anchorIndex)
 			},
+			// 暴露一个refresh方法
+			refresh() {
+				this.$refs.listview.refresh()
+			},
 			// scroll组件的滚动事件
 			scroll(pos) {
 				// 实时获取到better-scroll在Y轴上的位置
