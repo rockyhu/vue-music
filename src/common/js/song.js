@@ -61,7 +61,7 @@ export function createSong (musicData) {
  * @param singer
  * @returns {*}
  */
-function filterSinger (singer) {
+export function filterSinger (singer) {
 	let ret = []
 	// 边界处理
 	if (!singer) {
