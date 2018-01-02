@@ -18,3 +18,18 @@ export function shuffle (arr) {
 	}
 	return _arr
 }
+
+// 节流函数 - 延迟delay秒执行func函数,func函数只会执行一次
+export function debounce (func, delay) {
+	let timer
+	
+	// 获取函数的参数
+	return function (...args) {
+		if (timer) {
+			clearTimeout(timer)
+		}
+		timer = setTimeout(() => {
+			func.apply(this, args)
+		}, delay)
+	}
+}

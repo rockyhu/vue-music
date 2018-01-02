@@ -15,7 +15,7 @@ export default class Song {
 		this.url = url
 	}
 	
-	// 为Song类添加获取歌曲的方法
+	// 为Song类添加获取歌词的方法
 	getLyric () {
 		// 如果歌词已经存在那么直接返回即可
 		if (this.lyric) {

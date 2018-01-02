@@ -18,3 +18,6 @@ export const currentIndex = state => state.currentIndex
 export const currentSong = (state) => {
 	return state.playlist[state.currentIndex] || {}
 }
+
+// 搜索历史
+export const searchHistory = state => state.searchHistory

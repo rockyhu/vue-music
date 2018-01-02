@@ -1,5 +1,6 @@
 <template>
-	<scroll class="suggest" :data="result" :pullup="pullup" @scrollToEnd="searchMore" ref="suggest">
+	<scroll class="suggest" :data="result" :pullup="pullup" :beforeScroll="beforeScroll" @scrollToEnd="searchMore"
+			@beforeScroll="listScroll" ref="suggest">
 		<ul class="suggest-list">
 			<li @click="selectItem(item)" class="suggest-item" v-for="item in result">
 				<div class="icon">
@@ -11,6 +12,9 @@
 			</li>
 			<loading v-show="hasMore" title=""></loading>
 		</ul>
+		<div v-show="!hasMore && !result.length" class="no-result-wrapper">
+			<no-result title="抱歉，暂无搜索结果"></no-result>
+		</div>
 	</scroll>
 </template>
 
@@ -21,7 +25,8 @@
 	import Scroll from 'base/scroll/scroll'
 	import Loading from 'base/loading/loading'
 	import Singer from 'common/js/singer'
-	import { mapMutations } from 'vuex'
+	import { mapMutations, mapActions } from 'vuex'
+	import NoResult from 'base/no-result/no-result'
 
 	const TYPE_SINGER = 'singer'
 	const perpage = 20
@@ -47,7 +52,9 @@
 				// 上拉是否刷新
 				pullup: true,
 				// 是否加载完
-				hasMore: true
+				hasMore: true,
+				// 是否触发beforeScroll事件
+				beforeScroll: true
 			}
 		},
 		methods: {
@@ -98,7 +105,15 @@
 						path: `/search/${singer.id}`
 					})
 					this.setSinger(singer)
+				} else {
+					this.insertSong(item)
 				}
+				// 派发一个事件，用于搜索历史记录
+				this.$emit('select')
+			},
+			listScroll () {
+				// 派发事件给父组件
+				this.$emit('listScroll')
 			},
 			_checkMore (data) {
 				const song = data.song
@@ -129,7 +144,11 @@
 			// ES6扩展运算符,vuex提供的设置数据的语法糖mapMutations
 			...mapMutations({
 				setSinger: 'SET_SINGER'
-			})
+			}),
+			// ES6扩展运算符,vuex提供的设置数据的语法糖mapActions
+			...mapActions([
+				'insertSong'
+			])
 		},
 		watch: {
 			// watch query的变化，即当query发生变化的时候，去执行search方法
@@ -140,7 +159,8 @@
 		// 注册组件
 		components: {
 			Scroll,
-			Loading
+			Loading,
+			NoResult
 		}
 	}
 </script>

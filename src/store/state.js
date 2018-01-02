@@ -1,4 +1,5 @@
 import { playMode } from 'common/js/config'
+import { loadSearch } from 'common/js/cache'
 
 // 状态的管理
 const state = {
@@ -21,7 +22,9 @@ const state = {
 	// 播放模式 - 顺序播放
 	mode: playMode.sequence,
 	// 当前播放的索引
-	currentIndex: -1
+	currentIndex: -1,
+	// 搜索历史
+	searchHistory: loadSearch()
 }
 
 export default state

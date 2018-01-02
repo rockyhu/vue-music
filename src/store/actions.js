@@ -1,6 +1,7 @@
 import * as types from './mutation-types'
 import { playMode } from 'common/js/config'
 import { shuffle } from 'common/js/util'
+import { saveSearch, deleteSearch, clearSearch } from 'common/js/cache'
 
 // 查找当前歌曲在随机列表中的索引编号
 function findIndex (list, song) {
@@ -38,8 +39,9 @@ export const randomPlay = function ({commit}, {list}) {
 
 // 添加一首歌到播放列表
 export const insertSong = function ({commit, state}, song) {
-	let playlist = state.playlist
-	let sequenceList = state.sequenceList
+	// 不直接修改playlist,而是先去修改playlist的副本，然后再提交
+	let playlist = state.playlist.slice()
+	let sequenceList = state.sequenceList.slice()
 	let currentIndex = state.currentIndex
 	
 	// 记录当前歌曲
@@ -63,4 +65,42 @@ export const insertSong = function ({commit, state}, song) {
 			playlist.splice(fpIndex + 1, 1)
 		}
 	}
+	
+	// 插入的位置
+	let currentSIndex = findIndex(sequenceList, currentSong) + 1
+	
+	// 查找当前列表中是否有待插入的歌曲并返回其索引
+	let fsIndex = findIndex(sequenceList, song)
+	
+	// 插入这首歌到插入位置
+	sequenceList.splice(currentSIndex, 0, song)
+	
+	if (fsIndex > -1) {
+		if (currentSIndex > fsIndex) {
+			sequenceList.splice(fsIndex, 1)
+		} else {
+			sequenceList.splice(fsIndex + 1, 1)
+		}
+	}
+	
+	commit(types.SET_PLAYLIST, playlist)
+	commit(types.SET_SEQUENCE_LIST, sequenceList)
+	commit(types.SET_CURRENT_INDEX, currentIndex)
+	commit(types.SET_FULL_SCREEN, true)
+	commit(types.SET_PLAYING_STATE, true)
+}
+
+// 保存搜索历史
+export const saveSearchHistory = function ({commit}, query) {
+	commit(types.SET_SEARCH_HISTORY, saveSearch(query))
+}
+
+// 删除搜索历史
+export const deleteSearchHistory = function ({commit}, query) {
+	commit(types.SET_SEARCH_HISTORY, deleteSearch(query))
+}
+
+// 清空搜索历史
+export const clearSearchHistory = function ({commit}) {
+	commit(types.SET_SEARCH_HISTORY, clearSearch())
 }

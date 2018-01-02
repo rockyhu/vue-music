@@ -2,12 +2,14 @@
 	<div class="search-box">
 		<i class="icon-search"></i>
 		<!-- 采用v-model指令实现数据双向绑定，即改变输入框的值会反应到query变量中，改变query变量的值也会反应到输入框中 -->
-		<input type="text" v-model="query" :placeholder="placeholder" class="box">
+		<input ref="query" type="text" v-model="query" :placeholder="placeholder" class="box">
 		<i @click="clear" v-show="query" class="icon-dismiss"></i>
 	</div>
 </template>
 
 <script type="text/ecmascript-6">
+	import { debounce } from 'common/js/util'
+
 	export default {
 		// 接收父组件传送的参数
 		props: {
@@ -29,13 +31,18 @@
 			// 定义setQuery接口，用于设置search-box的input的值
 			setQuery (query) {
 				this.query = query
+			},
+			// input表单失去焦点的方法
+			blur () {
+				this.$refs.query.blur()
 			}
 		},
 		// 钩子函数
 		created () {
-			this.$watch('query', (newQuery) => {
+			// 采用节流函数debounce对input表单输入做延时执行
+			this.$watch('query', debounce((newQuery) => {
 				this.$emit('query', newQuery)
-			})
+			}, 200))
 		}
 	}
 </script>

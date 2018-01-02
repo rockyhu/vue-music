@@ -13,10 +13,17 @@
 						</li>
 					</ul>
 				</div>
+				<div class="search-history" v-show="searchHistory.length">
+					<h1 class="title">
+						<span class="text">搜索历史</span>
+						<span class="clear" @click="clearSearchHistory"><i class="icon-clear"></i></span>
+					</h1>
+					<search-list @select="addQuery" @delete="deleteSearchHistory" :searches="searchHistory"></search-list>
+				</div>
 			</div>
 		</div>
 		<div class="search-result" v-show="query">
-			<suggest :query="query"></suggest>
+			<suggest @select="saveSearch" @listScroll="blurInput" :query="query"></suggest>
 		</div>
 		<router-view></router-view>
 	</div>
@@ -27,6 +34,8 @@
 	import { getHotKey } from 'api/search'
 	import { ERR_OK } from 'api/config'
 	import Suggest from 'components/suggest/suggest'
+	import SearchList from 'base/search-list/search-list'
+	import { mapActions, mapGetters } from 'vuex'
 
 	export default {
 		// 钩子函数
@@ -40,6 +49,12 @@
 				query: ''
 			}
 		},
+		// 计算属性
+		computed: {
+			...mapGetters([
+				'searchHistory'
+			])
+		},
 		// 定义方法
 		methods: {
 			addQuery (query) {
@@ -48,6 +63,15 @@
 			onQueryChange (query) {
 				this.query = query
 			},
+			blurInput () {
+				// 父组件可以调用子组件的方法
+				// 调用search-box子组件的blur方法
+				this.$refs.searchBox.blur()
+			},
+			// 保存搜索历史
+			saveSearch () {
+				this.saveSearchHistory(this.query)
+			},
 			_getHotKey () {
 				getHotKey().then((res) => {
 					if (res.code === ERR_OK) {
@@ -55,12 +79,18 @@
 						this.hotKey = res.data.hotkey.slice(0, 11)
 					}
 				})
-			}
+			},
+			...mapActions([
+				'saveSearchHistory',
+				'deleteSearchHistory',
+				'clearSearchHistory'
+			])
 		},
 		// 注册组件
 		components: {
 			SearchBox,
-			Suggest
+			Suggest,
+			SearchList
 		}
 	}
 </script>
