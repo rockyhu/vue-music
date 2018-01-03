@@ -115,6 +115,10 @@
 				// 派发事件给父组件
 				this.$emit('listScroll')
 			},
+			// 方法代理
+			refresh () {
+				this.$refs.suggest.refresh()
+			},
 			_checkMore (data) {
 				const song = data.song
 				if (!song.list.length || (song.curnum + song.curpage * perpage) >= song.totalnum) {
