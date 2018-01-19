@@ -82,12 +82,13 @@
 						<i @click.stop="togglePlaying" class="icon-mini" :class="miniIcon"></i>
 					</progress-circle>
 				</div>
-				<div class="control">
+				<div class="control" @click="showPlaylist">
 					<i class="icon-playlist"></i>
 				</div>
 			</div>
 		</transition>
-		<audio ref="audio" :src="currentSong.url" @canplay="ready" @error="error" @timeupdate="updateTime"
+		<playlist ref="playlist"></playlist>
+		<audio ref="audio" :src="currentUrl" @canplay="ready" @error="error" @timeupdate="updateTime"
 			   @ended="end"></audio>
 	</div>
 </template>
@@ -96,12 +97,15 @@
 	import { mapGetters, mapMutations } from 'vuex'
 	import animations from 'create-keyframe-animation'
 	import { prefixStyle } from 'common/js/dom'
+	import { ERR_OK } from 'api/config'
+	import { getSongVkey } from 'api/song'
 	import ProgressBar from 'base/progress-bar/progress-bar'
 	import ProgressCircle from 'base/progress-circle/progress-circle'
 	import { playMode } from 'common/js/config'
 	import { shuffle } from 'common/js/util'
 	import Lyric from 'lyric-parser'
 	import Scroll from 'base/scroll/scroll'
+	import Playlist from 'components/playlist/playlist'
 
 	const transform = prefixStyle('transform')
 	const transitionDuration = prefixStyle('transitionDuration')
@@ -123,7 +127,9 @@
 				// 默认显示的页面
 				currentShow: 'cd',
 				// 当前播放的歌词
-				playingLyric: ''
+				playingLyric: '',
+				// 当前播放歌曲的链接
+				currentUrl: ''
 			}
 		},
 		// 计算属性
@@ -373,7 +379,9 @@
 			loop () {
 				// 将audio的currentTime设置为0即可
 				this.$refs.audio.currentTime = 0
-				this.$refs.audio.play()
+				if (this.currentUrl) {
+					this.$refs.audio.play()
+				}
 				// 循环播放下，重置歌词为最开始的时间位置
 				if (this.currentLyric) {
 					this.currentLyric.seek(0)
@@ -394,13 +402,22 @@
 					this.currentLineNum = 0
 				})
 			},
+			// 获取歌曲文件播放链接
+			getUrl () {
+				getSongVkey(this.currentSong.mid).then((res) => {
+					if (res.code === ERR_OK && res.data.items.length) {
+						let vkeyItem = res.data.items[0]
+						this.currentUrl = `http://dl.stream.qqmusic.qq.com/${vkeyItem['filename']}?vkey=${vkeyItem['vkey']}&guid=3655047200&fromtag=66`
+					}
+				})
+			},
 			// 歌词的回调函数 - 当前正在播放的歌词所在的信息
 			handleLyric ({lineNum, txt}) {
 				this.currentLineNum = lineNum
 				if (lineNum > 5) {
 					// 歌词滚动
 					let lineEl = this.$refs.lyricLine[lineNum - 5]
-					this.$refs.lyricList.scrollToElement(lineEl, 1000)
+					lineEl && this.$refs.lyricList.scrollToElement(lineEl, 1000)
 				} else {
 					// 直接滚动到顶部
 					this.$refs.lyricList.scrollTo(0, 0, 1000)
@@ -408,9 +425,11 @@
 				// 设置当前的歌词
 				this.playingLyric = txt
 			},
-
+			// 显示播放列表
+			showPlaylist () {
+				this.$refs.playlist.show()
+			},
 			// cd与歌词lyric左右滑动
-
 			// 手指touch开始
 			middleTouchStart (e) {
 				this.touch.initialized = true
@@ -541,16 +560,19 @@
 				if (this.currentLyric) {
 					this.currentLyric.stop()
 				}
+				this.getUrl()
 				setTimeout(() => {
-					this.$refs.audio.play()
-					this.getLyric()
-				}, 1000)
+					if (this.currentUrl) {
+						this.$refs.audio.play()
+						this.getLyric()
+					}
+				}, 500)
 			},
 			// 观测当前音乐的播放状态
 			playing (newPlaying) {
 				const audio = this.$refs.audio
 				this.$nextTick(() => {
-					newPlaying ? audio.play() : audio.pause()
+					newPlaying && this.currentUrl ? audio.play() : audio.pause()
 				})
 			}
 		},
@@ -558,7 +580,8 @@
 		components: {
 			ProgressBar,
 			ProgressCircle,
-			Scroll
+			Scroll,
+			Playlist
 		}
 	}
 </script>

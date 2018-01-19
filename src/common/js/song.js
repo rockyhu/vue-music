@@ -1,4 +1,4 @@
-import { getLyric } from 'api/song'
+import { getLyric, getSongVkey } from 'api/song'
 import { ERR_OK } from 'api/config'
 import { Base64 } from 'js-base64'
 
@@ -33,6 +33,27 @@ export default class Song {
 			})
 		})
 	}
+	
+	// 为Song类添加获取歌曲文件的方法
+	getUrl () {
+		// 如果歌曲文件已经存在那么直接返回即可
+		if (this.url) {
+			return Promise.resolve(this.url)
+		}
+		
+		return new Promise((resolve, reject) => {
+			getSongVkey(this.mid).then((res) => {
+				console.log(res)
+				if (res.code === ERR_OK && res.data.items.length) {
+					let vkeyItem = res.data.items[0]
+					this.url = `http://dl.stream.qqmusic.qq.com/${vkeyItem['filename']}?vkey=${vkeyItem['vkey']}&guid=3480493740&fromtag=66`
+					resolve(this.url)
+				}
+			}).catch((err) => {
+				console.log(err)
+			})
+		})
+	}
 }
 
 // 定义一个Song的工厂方法
@@ -44,8 +65,8 @@ export function createSong (musicData) {
 		name: musicData.songname,
 		album: musicData.albumname,
 		duration: musicData.interval,
-		image: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${musicData.albummid}.jpg?max_age=2592000`,
-		url: `http://ws.stream.qqmusic.qq.com/${musicData.songid}.m4a?fromtag=46`
+		image: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${musicData.albummid}.jpg?max_age=2592000`
+		// url: `http://ws.stream.qqmusic.qq.com/${musicData.songid}.m4a?fromtag=46`
 	})
 }
 
