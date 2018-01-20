@@ -404,11 +404,10 @@
 			},
 			// 获取歌曲文件播放链接
 			getUrl () {
-				getSongVkey(this.currentSong.mid).then((res) => {
-					if (res.code === ERR_OK && res.data.items.length) {
-						let vkeyItem = res.data.items[0]
-						this.currentUrl = `http://dl.stream.qqmusic.qq.com/${vkeyItem['filename']}?vkey=${vkeyItem['vkey']}&guid=3655047200&fromtag=66`
-					}
+				this.currentSong.getUrl().then((url) => {
+					this.currentUrl = url
+				}).catch(() => {
+					this.currentUrl = ''
 				})
 			},
 			// 歌词的回调函数 - 当前正在播放的歌词所在的信息

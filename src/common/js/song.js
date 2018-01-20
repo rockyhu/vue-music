@@ -43,14 +43,13 @@ export default class Song {
 		
 		return new Promise((resolve, reject) => {
 			getSongVkey(this.mid).then((res) => {
-				console.log(res)
 				if (res.code === ERR_OK && res.data.items.length) {
 					let vkeyItem = res.data.items[0]
-					this.url = `http://dl.stream.qqmusic.qq.com/${vkeyItem['filename']}?vkey=${vkeyItem['vkey']}&guid=3480493740&fromtag=66`
+					this.url = `http://dl.stream.qqmusic.qq.com/${vkeyItem['filename']}?vkey=${vkeyItem['vkey']}&guid=3655047200&fromtag=66`
 					resolve(this.url)
 				}
 			}).catch((err) => {
-				console.log(err)
+				reject(err)
 			})
 		})
 	}
