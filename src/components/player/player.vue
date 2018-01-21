@@ -82,7 +82,7 @@
 						<i @click.stop="togglePlaying" class="icon-mini" :class="miniIcon"></i>
 					</progress-circle>
 				</div>
-				<div class="control" @click="showPlaylist">
+				<div class="control" @click.stop="showPlaylist">
 					<i class="icon-playlist"></i>
 				</div>
 			</div>
@@ -551,6 +551,10 @@
 		watch: {
 			// 观测当前音乐的变化即当前音乐变化的时候，播放音乐
 			currentSong (newSong, oldSong) {
+				// 如果播放列表不存在歌曲了
+				if (!newSong.id) {
+					return
+				}
 				// 当新的歌曲与当前歌曲是同一首歌的时候
 				if (newSong.id === oldSong.id) {
 					return

@@ -12,11 +12,12 @@
 				</div>
 				<scroll ref="listContent" :data="sequenceList" class="list-content">
 					<ul>
-						<li class="item" v-for="item in sequenceList">
-							<i class="current"></i>
+						<li ref="listItem" class="item" v-for="(item,index) in sequenceList"
+							@click="selectItem(item, index)">
+							<i class="current" :class="getCurrentIcon(item)"></i>
 							<span class="text">{{item.name}}</span>
 							<span class="like"><i class="icon-not-favorite"></i></span>
-							<span class="delete"><i class="icon-delete"></i></span>
+							<span class="delete" @click.stop="deleteOne(item)"><i class="icon-delete"></i></span>
 						</li>
 					</ul>
 				</scroll>
@@ -35,7 +36,8 @@
 </template>
 
 <script type="text/ecmascript-6">
-	import { mapGetters } from 'vuex'
+	import { mapGetters, mapMutations, mapActions } from 'vuex'
+	import { playMode } from 'common/js/config'
 	import Scroll from 'base/scroll/scroll'
 
 	export default {
@@ -47,7 +49,10 @@
 		},
 		computed: {
 			...mapGetters([
-				'sequenceList'
+				'sequenceList',
+				'currentSong',
+				'playlist',
+				'mode'
 			])
 		},
 		methods: {
@@ -55,10 +60,60 @@
 				this.showFlag = true
 				setTimeout(() => {
 					this.$refs.listContent.refresh()
+					this.scrollToCurrent(this.currentSong)
 				}, 20)
 			},
 			hide () {
 				this.showFlag = false
+			},
+			// 获取当前播放歌曲的状态icon
+			getCurrentIcon (item) {
+				return this.currentSong.id === item.id ? 'icon-play' : ''
+			},
+			// 选择歌曲的时候，设置当前点击的歌曲为当前播放歌曲
+			selectItem (item, index) {
+				// 如果当前播放模式是随机播放的话
+				if (this.mode === playMode.random) {
+					// 获取随机播放模式下，当前播放歌曲在播放列表中的索引位置
+					index = this.playlist.findIndex((song) => {
+						return song.id === item.id
+					})
+				}
+				// 设置当前播放歌曲的索引
+				this.setCurrentIndex(index)
+				// 设置当前的播放状态
+				this.setPlayingState(true)
+			},
+			// 在当前播放列中滚动到当前播放的歌曲
+			scrollToCurrent (current) {
+				const index = this.sequenceList.findIndex((song) => {
+					return current.id === song.id
+				})
+				// 滚动到当前播放的歌曲位置
+				this.$refs.listContent.scrollToElement(this.$refs.listItem[index], 300)
+			},
+			// 删除一首歌曲
+			deleteOne (item) {
+				this.deleteSong(item)
+				if (!this.playlist.length) {
+					this.hide()
+				}
+			},
+			...mapMutations({
+				// 做映射，即起个名字
+				'setCurrentIndex': 'SET_CURRENT_INDEX',
+				'setPlayingState': 'SET_PLAYING_STATE'
+			}),
+			...mapActions([
+				'deleteSong'
+			])
+		},
+		watch: {
+			currentSong (newSong, oldSong) {
+				if (!this.showFlag || newSong.id === oldSong.id) {
+					return
+				}
+				this.scrollToCurrent(newSong)
 			}
 		},
 		components: {
