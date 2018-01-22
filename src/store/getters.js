@@ -23,3 +23,6 @@ export const currentSong = (state) => {
 export const searchHistory = state => state.searchHistory
 // 播放历史
 export const playHistory = state => state.playHistory
+
+// 我喜欢的歌曲
+export const favoriteList = state => state.favoriteList

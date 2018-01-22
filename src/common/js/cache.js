@@ -10,6 +10,11 @@ const PLAY_KEY = '__play__'
 // 定义最大缓存的数据空间，多余的数据会被踢出
 const PLAY_MAX_LENGTH = 200
 
+// 定义我喜欢的歌曲列表的缓存key，避免缓存冲突
+const FAVORITE_KEY = '__favorite__'
+// 定义最大缓存的数据空间，多余的数据会被踢出
+const FAVORITE_MAX_LENGTH = 200
+
 // 缓存当前的搜索历史
 export function saveSearch (query) {
 	// 获取当前search存储空间的列表，如果没有存储过，那就是空数组
@@ -75,6 +80,38 @@ export function savePlay (song) {
 // 读取播放历史
 export function loadPlay () {
 	return storage.get(PLAY_KEY, [])
+}
+
+// 缓存添加的喜欢歌曲
+export function saveFavorite(song) {
+	// 获取当前缓存的我喜欢歌曲列表
+	let songs = storage.get(FAVORITE_KEY, [])
+	// 插入歌曲
+	insertArray(songs, song, (item) => {
+		return item.id === song.id
+	}, FAVORITE_MAX_LENGTH)
+	// 存储
+	storage.set(FAVORITE_KEY, songs)
+	// 返回
+	return songs
+}
+
+// 从我喜欢的歌曲缓存中删除歌曲
+export function deleteFavorite(song) {
+	// 获取当前缓存的我喜欢歌曲列表
+	let songs = storage.get(FAVORITE_KEY, [])
+	deleteFromArray(songs, (item) => {
+		return item.id === song.id
+	})
+	// 存储
+	storage.set(FAVORITE_KEY, songs)
+	// 返回
+	return songs
+}
+
+// 读取我喜欢的歌曲列表
+export function loadFavorite() {
+	return storage.get(FAVORITE_KEY, [])
 }
 
 /**

@@ -19,3 +19,5 @@ export const SET_CURRENT_INDEX = 'SET_CURRENT_INDEX'
 export const SET_SEARCH_HISTORY = 'SET_SEARCH_HISTORY'
 // 播放历史
 export const SET_PLAY_HISTORY = 'SET_PLAY_HISTORY'
+// 我喜欢的歌曲
+export const SET_FAVORITE_LIST = 'SET_FAVORITE_LIST'

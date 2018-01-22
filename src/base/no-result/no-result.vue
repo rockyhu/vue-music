@@ -18,6 +18,7 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
 	@import "~common/stylus/mixin"
+	@import "~common/stylus/variable"
 
 	.no-result
 		text-align: center
