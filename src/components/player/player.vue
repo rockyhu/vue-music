@@ -62,7 +62,8 @@
 							<i @click="next" class="icon-next"></i>
 						</div>
 						<div class="icon i-right">
-							<i class="icon" @click="toggleFavorite(currentSong)" :class="getFavoriteIcon(currentSong)"></i>
+							<i class="icon" @click="toggleFavorite(currentSong)"
+							   :class="getFavoriteIcon(currentSong)"></i>
 						</div>
 					</div>
 				</div>
@@ -88,7 +89,7 @@
 			</div>
 		</transition>
 		<playlist ref="playlist"></playlist>
-		<audio ref="audio" :src="currentUrl" @canplay="ready" @error="error" @timeupdate="updateTime"
+		<audio ref="audio" :src="currentUrl" @play="ready" @error="error" @timeupdate="updateTime"
 			   @ended="end"></audio>
 	</div>
 </template>
@@ -254,6 +255,7 @@
 				// 如果歌曲列表只有一个歌曲的时候，那么就循环播放即可
 				if (this.playlist.length === 1) {
 					this.loop()
+					return
 				} else {
 					let index = this.currentIndex - 1
 					if (index === -1) {
@@ -279,6 +281,7 @@
 				// 如果歌曲列表只有一个歌曲的时候，那么就循环播放即可
 				if (this.playlist.length === 1) {
 					this.loop()
+					return
 				} else {
 					let index = this.currentIndex + 1
 					// 当当前播放音乐索引等于播放队列的长度时，index索引置0
@@ -361,6 +364,9 @@
 			// 获取歌词
 			getLyric () {
 				this.currentSong.getLyric().then((lyric) => {
+					if (this.currentSong.lyric !== lyric) {
+						return
+					}
 					// 当前歌词对象
 					this.currentLyric = new Lyric(lyric, this.handleLyric)
 					if (this.playing) {
@@ -533,8 +539,11 @@
 				if (this.currentLyric) {
 					this.currentLyric.stop()
 				}
+				clearTimeout(this.timer)
+				// 这里待优化
+				// ...
 				this.getUrl()
-				setTimeout(() => {
+				this.timer = setTimeout(() => {
 					if (this.currentUrl) {
 						this.$refs.audio.play()
 						this.getLyric()
