@@ -10,7 +10,7 @@
 						<span class="clear" @click="showConfirm"><i class="icon-clear"></i></span>
 					</h1>
 				</div>
-				<scroll ref="listContent" :data="sequenceList" class="list-content">
+				<scroll ref="listContent" :data="sequenceList" :refreshDelay="refreshDelay" class="list-content">
 					<transition-group name="list" tag="ul">
 						<li :key="item.id" ref="listItem" class="item" v-for="(item,index) in sequenceList"
 							@click="selectItem(item, index)">
@@ -22,7 +22,7 @@
 					</transition-group>
 				</scroll>
 				<div class="list-operate">
-					<div class="add">
+					<div class="add" @click="addSong">
 						<i class="icon-add"></i>
 						<span class="text">添加歌曲到队列</span>
 					</div>
@@ -32,6 +32,7 @@
 				</div>
 			</div>
 			<confirm ref="confirm" @confirm="confirmClear" text="是否清空播放列表？" confirmBtnText="清空"></confirm>
+			<add-song ref="addSong"></add-song>
 		</div>
 	</transition>
 </template>
@@ -42,6 +43,7 @@
 	import Scroll from 'base/scroll/scroll'
 	import Confirm from 'base/confirm/confirm'
 	import { playerMixin } from 'common/js/mixin'
+	import AddSong from 'components/add-song/add-song'
 
 	export default {
 		// 挂载mixin
@@ -49,7 +51,9 @@
 		data () {
 			return {
 				// 控制显示隐藏
-				showFlag: false
+				showFlag: false,
+				// scroll刷新时间
+				refreshDelay: 100
 			}
 		},
 		computed: {
@@ -110,6 +114,9 @@
 				this.deleteSongList()
 				this.hide()
 			},
+			addSong () {
+				this.$refs.addSong.show()
+			},
 			...mapActions([
 				'deleteSong',
 				'deleteSongList'
@@ -125,7 +132,8 @@
 		},
 		components: {
 			Scroll,
-			Confirm
+			Confirm,
+			AddSong
 		}
 	}
 </script>

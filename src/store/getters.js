@@ -21,3 +21,5 @@ export const currentSong = (state) => {
 
 // 搜索历史
 export const searchHistory = state => state.searchHistory
+// 播放历史
+export const playHistory = state => state.playHistory

@@ -1,4 +1,4 @@
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 import { shuffle } from 'common/js/util'
 import { playMode } from 'common/js/config'
 
@@ -26,7 +26,7 @@ export const playlistMixin = {
 	}
 }
 
-// 组件与组件之间的js功能逻辑代码共享
+// player组件与playlist组件之间的js功能逻辑代码共享
 export const playerMixin = {
 	computed: {
 		// 当前音乐的播放模式
@@ -71,5 +71,41 @@ export const playerMixin = {
 			setPlayMode: 'SET_PLAY_MODE',
 			setPlaylist: 'SET_PLAYLIST'
 		})
+	}
+}
+
+// add-song组件与search组件之间的js功能逻辑代码共享
+export const searchMixin = {
+	data () {
+		return {
+			query: '',
+			refreshDelay: 100
+		}
+	},
+	computed: {
+		...mapGetters([
+			'searchHistory'
+		])
+	},
+	methods: {
+		onQueryChange (query) {
+			this.query = query
+		},
+		blurInput () {
+			// 父组件可以调用子组件的方法
+			// 调用search-box子组件的blur方法
+			this.$refs.searchBox.blur()
+		},
+		addQuery (query) {
+			this.$refs.searchBox.setQuery(query)
+		},
+		// 保存搜索历史
+		saveSearch () {
+			this.saveSearchHistory(this.query)
+		},
+		...mapActions([
+			'saveSearchHistory',
+			'deleteSearchHistory'
+		])
 	}
 }

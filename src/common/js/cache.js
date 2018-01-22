@@ -5,6 +5,11 @@ const SEARCH_KEY = '__search__'
 // 定义最大缓存的数据空间,多余的数据会被踢出，每次插入的数据都会在第一个
 const SEARCH_MAX_LENGTH = 15
 
+// 定义播放缓存的key，避免缓存冲突
+const PLAY_KEY = '__play__'
+// 定义最大缓存的数据空间，多余的数据会被踢出
+const PLAY_MAX_LENGTH = 200
+
 // 缓存当前的搜索历史
 export function saveSearch (query) {
 	// 获取当前search存储空间的列表，如果没有存储过，那就是空数组
@@ -48,6 +53,28 @@ export function deleteSearch (query) {
 export function clearSearch () {
 	storage.remove(SEARCH_KEY)
 	return []
+}
+
+// 缓存当前播放的歌曲
+export function savePlay (song) {
+	// 获取当前play存储空间的列表，如果没有存储过，那就是空数组
+	let songs = storage.get(PLAY_KEY, [])
+	
+	// 插入当前播放歌曲
+	insertArray(songs, song, (item) => {
+		return item.id === song.id
+	}, PLAY_MAX_LENGTH)
+	
+	// 存储play
+	storage.set(PLAY_KEY, songs)
+	
+	// 返回
+	return songs
+}
+
+// 读取播放历史
+export function loadPlay () {
+	return storage.get(PLAY_KEY, [])
 }
 
 /**

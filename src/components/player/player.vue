@@ -94,7 +94,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-	import { mapGetters, mapMutations } from 'vuex'
+	import { mapGetters, mapMutations, mapActions } from 'vuex'
 	import animations from 'create-keyframe-animation'
 	import { prefixStyle } from 'common/js/dom'
 	import { ERR_OK } from 'api/config'
@@ -152,7 +152,6 @@
 			disableCls () {
 				return this.songReady ? '' : 'disable'
 			},
-
 			// 当前音乐的播放进度百分比
 			percent () {
 				return this.currentTime / this.currentSong.duration
@@ -302,6 +301,7 @@
 			// 音乐已准备好，可以播放
 			ready () {
 				this.songReady = true
+				this.savePlayHistory(this.currentSong)
 			},
 			// 音乐调用错误，主要解决音乐加载失败，或者是没有网络，这里也设置为true，从而不影响正常使用
 			error () {
@@ -512,7 +512,10 @@
 			// vuex语法糖,可通过this.来调用方法
 			...mapMutations({
 				setFullScreen: 'SET_FULL_SCREEN'
-			})
+			}),
+			...mapActions([
+				'savePlayHistory'
+			])
 		},
 		// 观测属性变化
 		watch: {

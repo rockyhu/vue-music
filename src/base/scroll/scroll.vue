@@ -40,6 +40,11 @@
 			beforeScroll: {
 				type: Boolean,
 				default: false
+			},
+			// 当data变化时刷新组件的时间
+			refreshDelay: {
+				type: Number,
+				default: 20
 			}
 		},
 		// 钩子函数
@@ -113,7 +118,7 @@
 			data () {
 				setTimeout(() => {
 					this.refresh()
-				}, 20)
+				}, this.refreshDelay)
 			}
 		}
 	}

@@ -4,7 +4,7 @@
 			<search-box ref="searchBox" @query="onQueryChange"></search-box>
 		</div>
 		<div ref="shortcutWrapper" class="shortcut-wrapper" v-show="!query">
-			<scroll class="shortcut" ref="shortcut" :data="shortcut">
+			<scroll class="shortcut" ref="shortcut" :refreshDelay="refreshDelay" :data="shortcut">
 				<div>
 					<div class="hot-key">
 						<h1 class="title">热门搜索</h1>
@@ -41,11 +41,11 @@
 	import SearchList from 'base/search-list/search-list'
 	import Confirm from 'base/confirm/confirm'
 	import Scroll from 'base/scroll/scroll'
-	import { mapActions, mapGetters } from 'vuex'
-	import { playlistMixin } from 'common/js/mixin'
+	import { mapActions } from 'vuex'
+	import { playlistMixin, searchMixin } from 'common/js/mixin'
 
 	export default {
-		mixins: [playlistMixin],
+		mixins: [playlistMixin, searchMixin],
 		// 钩子函数
 		created () {
 			this._getHotKey()
@@ -53,8 +53,7 @@
 		// 定义属性
 		data () {
 			return {
-				hotKey: [],
-				query: ''
+				hotKey: []
 			}
 		},
 		// 计算属性
@@ -62,10 +61,7 @@
 			// 将hotKey和searchHistory合并为一个数组，当其中的一个发生改变时，shortcut都将发生改变
 			shortcut () {
 				return this.hotKey.concat(this.searchHistory)
-			},
-			...mapGetters([
-				'searchHistory'
-			])
+			}
 		},
 		// 定义方法
 		methods: {
@@ -82,21 +78,6 @@
 				// 运行suggest组件代理的refresh方法，用于重新计算suggest组件下的scroll组件的高度
 				this.$refs.suggest.refresh()
 			},
-			addQuery (query) {
-				this.$refs.searchBox.setQuery(query)
-			},
-			onQueryChange (query) {
-				this.query = query
-			},
-			blurInput () {
-				// 父组件可以调用子组件的方法
-				// 调用search-box子组件的blur方法
-				this.$refs.searchBox.blur()
-			},
-			// 保存搜索历史
-			saveSearch () {
-				this.saveSearchHistory(this.query)
-			},
 			showConfirm () {
 				this.$refs.confirm.show()
 			},
@@ -109,8 +90,6 @@
 				})
 			},
 			...mapActions([
-				'saveSearchHistory',
-				'deleteSearchHistory',
 				'clearSearchHistory'
 			])
 		},
