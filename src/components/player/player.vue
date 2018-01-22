@@ -102,15 +102,17 @@
 	import ProgressBar from 'base/progress-bar/progress-bar'
 	import ProgressCircle from 'base/progress-circle/progress-circle'
 	import { playMode } from 'common/js/config'
-	import { shuffle } from 'common/js/util'
 	import Lyric from 'lyric-parser'
 	import Scroll from 'base/scroll/scroll'
 	import Playlist from 'components/playlist/playlist'
+	import { playerMixin } from 'common/js/mixin'
 
 	const transform = prefixStyle('transform')
 	const transitionDuration = prefixStyle('transitionDuration')
 
 	export default {
+		// 挂载mixin
+		mixins: [playerMixin],
 		// 计算属性
 		data () {
 			return {
@@ -150,10 +152,7 @@
 			disableCls () {
 				return this.songReady ? '' : 'disable'
 			},
-			// 当前音乐的播放模式
-			iconMode () {
-				return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
-			},
+
 			// 当前音乐的播放进度百分比
 			percent () {
 				return this.currentTime / this.currentSong.duration
@@ -161,12 +160,8 @@
 			// vuex语法糖
 			...mapGetters([
 				'fullScreen',
-				'playlist',
-				'currentSong',
 				'playing',
-				'currentIndex',
-				'mode',
-				'sequenceList'
+				'currentIndex'
 			])
 		},
 		// 钩子hook
@@ -342,30 +337,6 @@
 					this.currentLyric.seek(currentTime * 1000)
 				}
 			},
-			// 改变播放模式
-			changeMode () {
-				const mode = (this.mode + 1) % 3
-				this.setPlayMode(mode)
-
-				let list = null
-				// 如果是随机播放，那么随机打乱播放次序
-				if (mode === playMode.random) {
-					list = shuffle(this.sequenceList)
-				} else {
-					// 否则，播放次序不变
-					list = this.sequenceList
-				}
-				this.resetCurrentIndex(list)
-				this.setPlaylist(list)
-			},
-			// 重置currentIndex，当前播放的音乐索引
-			resetCurrentIndex (list) {
-				// 找到当前播放音乐的索引
-				let index = list.findIndex((item) => {
-					return item.id === this.currentSong.id
-				})
-				this.setCurrentIndex(index)
-			},
 			// 当前歌曲播放完毕
 			end () {
 				// 如果当前的播放模式是循环模式
@@ -540,11 +511,7 @@
 			},
 			// vuex语法糖,可通过this.来调用方法
 			...mapMutations({
-				setFullScreen: 'SET_FULL_SCREEN',
-				setPlayingState: 'SET_PLAYING_STATE',
-				setCurrentIndex: 'SET_CURRENT_INDEX',
-				setPlayMode: 'SET_PLAY_MODE',
-				setPlaylist: 'SET_PLAYLIST'
+				setFullScreen: 'SET_FULL_SCREEN'
 			})
 		},
 		// 观测属性变化

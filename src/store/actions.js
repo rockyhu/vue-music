@@ -127,9 +127,14 @@ export const deleteSong = function ({commit, state}, song) {
 	commit(types.SET_CURRENT_INDEX, currentIndex)
 	
 	// 如果整个播放列表删除完了，那么播放状态要置为false
-	if (!playlist.length) {
-		commit(types.SET_PLAYING_STATE, false)
-	} else {
-		commit(types.SET_PLAYING_STATE, true)
-	}
+	const playingState = playlist.length > 0
+	commit(types.SET_PLAYING_STATE, playingState)
+}
+
+// 清空播放列表
+export const deleteSongList = function ({commit}) {
+	commit(types.SET_PLAYLIST, [])
+	commit(types.SET_SEQUENCE_LIST, [])
+	commit(types.SET_CURRENT_INDEX, -1)
+	commit(types.SET_PLAYING_STATE, false)
 }
