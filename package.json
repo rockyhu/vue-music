@@ -11,9 +11,9 @@
 		"lint": "eslint --ext .js,.vue src"
 	},
 	"dependencies": {
-		"axios": "^0.16.2",
+		"axios": "^0.17.1",
 		"babel-runtime": "^6.26.0",
-		"better-scroll": "^1.6.3",
+		"better-scroll": "^1.8.0",
 		"create-keyframe-animation": "^0.1.0",
 		"fastclick": "^1.0.6",
 		"good-storage": "^1.0.1",
@@ -22,8 +22,8 @@
 		"lyric-parser": "^1.0.1",
 		"vue": "^2.5.13",
 		"vue-lazyload": "^1.1.4",
-		"vue-router": "^2.8.1",
-		"vuex": "^2.5.0"
+		"vue-router": "^3.0.1",
+		"vuex": "^3.0.1"
 	},
 	"devDependencies": {
 		"autoprefixer": "^7.2.4",
@@ -70,7 +70,8 @@
 		"webpack-bundle-analyzer": "^2.9.1",
 		"webpack-dev-middleware": "^1.12.2",
 		"webpack-hot-middleware": "^2.21.0",
-		"webpack-merge": "^4.1.1"
+		"webpack-merge": "^4.1.1",
+		"vconsole": "^3.1.0"
 	},
 	"engines": {
 		"node": ">= 4.0.0",

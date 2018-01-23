@@ -5,8 +5,11 @@ import router from './router'
 import store from './store'
 import fastclick from 'fastclick'
 import Vuelazyload from 'vue-lazyload'
-
 import 'common/stylus/index.styl'
+import Vconsole from 'vconsole'
+
+/* eslint-disable no-new */
+new Vconsole()
 
 Vue.config.productionTip = false
 

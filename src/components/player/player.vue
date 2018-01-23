@@ -548,7 +548,7 @@
 						this.$refs.audio.play()
 						this.getLyric()
 					}
-				}, 500)
+				}, 1000)
 			},
 			// 观测当前音乐的播放状态
 			playing (newPlaying) {
