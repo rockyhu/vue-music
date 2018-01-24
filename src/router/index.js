@@ -45,6 +45,12 @@ const UserCenter = (resolve) => {
 	})
 }
 
+const TopList = (resolve) => {
+	import('components/top-list/top-list').then((module) => {
+		resolve(module)
+	})
+}
+
 const NotFoundComponent = (resolve) => {
 	import('components/nofound/not-found-component').then((module) => {
 		resolve(module)
@@ -86,7 +92,15 @@ export default new Router({
 		},
 		{
 			path: '/rank',
-			component: Rank
+			component: Rank,
+			// 子路由
+			children: [
+				{
+					// 在主路由的基础上添加id属性
+					path: ':id',
+					component: TopList
+				}
+			]
 		},
 		{
 			path: '/search',

@@ -17,7 +17,7 @@
 		<scroll @scroll="scroll" :probe-type="probeType" :listen-scroll="listenScroll" :data="songs" class="list"
 				ref="list">
 			<div class="song-list-wrapper">
-				<song-list @select="selectItem" :songs="songs"></song-list>
+				<song-list :rank="rank" @select="selectItem" :songs="songs"></song-list>
 			</div>
 			<div class="loading-container" v-show="!songs.length">
 				<loading></loading>
@@ -60,6 +60,11 @@
 			title: {
 				type: String,
 				default: ''
+			},
+			// 是否显示排行榜样式
+			rank: {
+				type: Boolean,
+				default: false
 			}
 		},
 		// 属性

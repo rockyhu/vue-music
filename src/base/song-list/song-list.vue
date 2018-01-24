@@ -1,7 +1,10 @@
 <template>
 	<div class="song-list">
 		<ul>
-			<li @click="selectItem(song,index)" v-for="(song,index) in songs" class="item">
+			<li @click.stop="selectItem(song, index)" v-for="(song, index) in songs" class="item">
+				<div class="rankicon" v-show="rank">
+					<span :class="getRankCls(index)">{{getRankText(index)}}</span>
+				</div>
 				<div class="content">
 					<h2 class="name">{{song.name}}</h2>
 					<p class="desc">{{getDesc(song)}}</p>
@@ -19,6 +22,11 @@
 			songs: {
 				type: Array,
 				default: []
+			},
+			// 是否存在排行样式，默认不存在排行样式
+			rank: {
+				type: Boolean,
+				default: false
 			}
 		},
 		// 方法属性
@@ -30,6 +38,20 @@
 			// 派发点击事件给父元素
 			selectItem (item, index) {
 				this.$emit('select', item, index)
+			},
+			// 排行榜样式
+			getRankCls (index) {
+				if (index <= 2) {
+					return `icon icon${index}`
+				} else {
+					return 'text'
+				}
+			},
+			// 排行榜文案
+			getRankText (index) {
+				if (index > 2) {
+					return index + 1
+				}
 			}
 		}
 	}
@@ -46,7 +68,7 @@
 			box-sizing: border-box
 			height: 64px
 			font-size: $font-size-medium
-			.rank
+			.rankicon
 				flex: 0 0 25px
 				width: 25px
 				margin-right: 30px

@@ -7,6 +7,9 @@ export const SET_SINGER = 'SET_SINGER'
 // 歌单歌曲动作
 export const SET_DISC = 'SET_DISC'
 
+// 排行榜歌单动作
+export const SET_TOP_LIST = 'SET_TOP_LIST'
+
 // 设置播放动作集合
 export const SET_PLAYING_STATE = 'SET_PLAYING_STATE'
 export const SET_FULL_SCREEN = 'SET_FULL_SCREEN'
