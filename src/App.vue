@@ -10,8 +10,8 @@
 </template>
 
 <script type="text/ecmascript-6">
-	import MHeader from 'components/m-header/m-header.vue'
-	import Tab from 'components/tab/tab.vue'
+	import MHeader from 'components/m-header/m-header'
+	import Tab from 'components/tab/tab'
 	import Player from 'components/player/player'
 
 	export default {

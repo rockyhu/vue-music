@@ -6,6 +6,7 @@ import store from './store'
 import fastclick from 'fastclick'
 import Vuelazyload from 'vue-lazyload'
 import 'common/stylus/index.styl'
+
 // 移动端调试工具，需要调试的时候，可以开启
 // import Vconsole from 'vconsole'
 

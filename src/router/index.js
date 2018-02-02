@@ -58,7 +58,7 @@ const NotFoundComponent = (resolve) => {
 }
 
 export default new Router({
-	mode: 'history',
+	// mode: 'history',
 	routes: [
 		// 定义没有找到组件的路由
 		{path: '*', component: NotFoundComponent},

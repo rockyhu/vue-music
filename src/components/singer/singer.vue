@@ -108,6 +108,17 @@
 				setSinger: 'SET_SINGER'
 			})
 		},
+//		watch: {
+//			// 观测路由$route
+//			'$route' (to, from) {
+//				// to 表示目标路由对象
+//				// /singer/0025NhlN2yWrP4
+//				console.log(to.path)
+//				// from 表示当前路由对象
+//				// /singer
+//				console.log(from.path)
+//			}
+//		},
 		// 注册组件
 		components: {
 			ListView

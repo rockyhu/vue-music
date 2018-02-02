@@ -15,7 +15,7 @@
 	import { addClass } from 'common/js/dom'
 
 	export default {
-		data() {
+		data () {
 			return {
 				// 轮播图数量
 				dots: [],
@@ -35,6 +35,16 @@
 				type: Boolean,
 				default: true
 			},
+			// 滚动到下一个的阈值
+			threshold: {
+				type: Number,
+				default: 0.3
+			},
+			// 滚动速度
+			speed: {
+				type: Number,
+				default: 400
+			},
 			// 自动轮播时间间隔
 			interval: {
 				type: Number,
@@ -42,7 +52,7 @@
 			}
 		},
 		// 钩子函数
-		mounted() {
+		mounted () {
 			// 20为一个经验值
 			setTimeout(() => {
 				this._setSliderWidth()
@@ -65,7 +75,7 @@
 		// 方法函数
 		methods: {
 			// 设置slider容器的宽度
-			_setSliderWidth(isResize) {
+			_setSliderWidth (isResize) {
 				this.children = this.$refs.sliderGroup.children
 
 				let width = 0
@@ -89,31 +99,25 @@
 				this.$refs.sliderGroup.style.width = width + 'px'
 			},
 			// 初始化dots
-			_initDots() {
+			_initDots () {
 				this.dots = new Array(this.children.length)
 			},
 			// 初始化slider
-			_initSlider() {
+			_initSlider () {
 				this.slider = new BScroll(this.$refs.slider, {
 					scrollX: true,
+					scrollY: false,
 					// 惯性
 					momentum: false,
 					snap: {
 						loop: this.loop,
-						threshold: 0.3,
-						speed: 400
+						threshold: this.threshold,
+						speed: this.speed
 					}
 				})
 
 				this.slider.on('scrollEnd', () => {
 					let pageIndex = this.slider.getCurrentPage().pageX
-					if (pageIndex > this.dots.length) {
-						pageIndex = pageIndex % this.dots.length
-					}
-					this.slider.goToPage(pageIndex, 0, 400)
-					if (this.loop) {
-						pageIndex -= 1
-					}
 					this.currentPageIndex = pageIndex
 					if (this.autoPlay) {
 						clearTimeout(this.timer)
@@ -122,18 +126,26 @@
 				})
 			},
 			// 播放
-			_play() {
+			_play () {
 				let pageIndex = this.currentPageIndex + 1
-				if (this.loop) {
-					pageIndex += 1
+				if (pageIndex === this.dots.length && this.loop) {
+					pageIndex = 0
 				}
 				this.timer = setTimeout(() => {
-					this.slider.goToPage(pageIndex, 0, 400)
+					this.slider.goToPage(pageIndex, 0, this.speed)
 				}, this.interval)
 			}
 		},
+		activated () {
+			if (this.autoPlay) {
+				this._play()
+			}
+		},
+		deactivated () {
+			clearTimeout(this.timer)
+		},
 		// 钩子函数，销毁
-		destroyed() {
+		beforeDestroy () {
 			clearTimeout(this.timer)
 		}
 	}

@@ -543,12 +543,14 @@
 				// 这里待优化
 				// ...
 				this.getUrl()
-				this.timer = setTimeout(() => {
-					if (this.currentUrl) {
+			},
+			currentUrl (newCurrentUrl) {
+				if (newCurrentUrl) {
+					this.timer = setTimeout(() => {
 						this.$refs.audio.play()
 						this.getLyric()
-					}
-				}, 1000)
+					}, 1000)
+				}
 			},
 			// 观测当前音乐的播放状态
 			playing (newPlaying) {
