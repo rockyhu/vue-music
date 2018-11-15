@@ -12,7 +12,7 @@ export function getSingerList () {
 		channel: 'singer',
 		page: 'list',
 		key: 'all_all_all',
-		pagesize: 100,
+		pagesize: 500,
 		pagenum: 1,
 		hostUin: 0,
 		needNewCode: 0,
